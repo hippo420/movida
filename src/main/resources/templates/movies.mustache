@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>🎬 영화 목록</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+            background-color: #f9fafb;
+            color: #1e1e1e;
+        }
+        header {
+            background-color: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e5e8eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e1e1e;
+        }
+        .search-box {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .search-box input {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            outline: none;
+            font-size: 0.95rem;
+            background-color: #fff;
+        }
+        .search-box button {
+            background-color: #3182f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+        }
+        .search-box button:hover {
+            background-color: #1a6ef2;
+        }
+
+        main {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .movie-card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 20px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .movie-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 6px;
+        }
+        .movie-genre {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        .movie-desc {
+            font-size: 0.95rem;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        .tag-list span {
+            background-color: #eff6ff;
+            color: #2563eb;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            margin-right: 6px;
+        }
+        .actor-list {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+        footer {
+            text-align: center;
+            color: #9ca3af;
+            padding: 20px;
+            font-size: 0.85rem;
+            border-top: 1px solid #e5e8eb;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>🎬 영화 목록</h1>
+    <form class="search-box" method="get" action="/movies">
+        <input type="text" name="title" placeholder="제목">
+        <input type="text" name="actor" placeholder="배우">
+        <input type="text" name="tag" placeholder="해시태그 (# 제외)">
+        <button type="submit">검색</button>
+    </form>
+</header>
+
+<main>
+    {{#movies}}
+        <div class="movie-card">
+            <div class="movie-title">{{title}}</div>
+            <div class="movie-genre">{{genre}}</div>
+            <div class="movie-desc">{{description}}</div>
+            <div class="tag-list">
+                {{#tags}}
+                    <span>#{{name}}</span>
+                {{/tags}}
+            </div>
+            <div class="actor-list">
+                🎭 출연:
+                {{#actors}} {{name}} {{/actors}}
+            </div>
+        </div>
+    {{/movies}}
+</main>
+
+<footer>© 2025 Toss 스타일 영화 검색 게시판</footer>
+</body>
+</html>

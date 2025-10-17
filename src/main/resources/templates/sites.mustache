@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>🌐 사이트 목록</title>
+    <style>
+        body {
+            font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+            margin: 0;
+            background-color: #f9fafb;
+        }
+        header {
+            background-color: #fff;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e5e8eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+        .search-box input {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+        }
+        .search-box button {
+            background-color: #3182f6;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+
+        .action-bar {
+            padding: 10px 40px;
+            display: flex;
+            justify-content: flex-end;
+            background: #fff;
+            border-bottom: 1px solid #e5e8eb;
+            gap: 10px;
+        }
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-add { background-color: #3182f6; color: #fff; }
+        .btn-delete { background-color: #ef4444; color: #fff; }
+
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .site-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 20px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            position: relative;
+        }
+        .site-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+        .site-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .site-url {
+            font-size: 0.9rem;
+            color: #6b7280;
+            word-break: break-all;
+        }
+
+        .delete-checkbox {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            transform: scale(1.2);
+        }
+
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-edit { background-color: #10b981; color: #fff; }
+
+        /* 모달 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 400px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .modal form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .modal input[type="text"] {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-cancel { background-color: #e5e7eb; }
+        .btn-save { background-color: #3182f6; color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌐 사이트 목록</h1>
+    <form class="search-box" onsubmit="searchSites(event)">
+        <input type="text" id="searchTag" placeholder="해시태그 검색 (#제외)">
+        <button type="submit">검색</button>
+    </form>
+</header>
+
+<div class="action-bar">
+    <button class="btn btn-add" onclick="openModal()">➕ 새 사이트 등록</button>
+    <button class="btn btn-delete" onclick="deleteSelected()">🗑 선택 삭제</button>
+</div>
+
+<main id="siteGrid" style="padding: 40px;">
+    <table style="width:100%; border-collapse: collapse; background:#fff; border-radius:16px; overflow:hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <thead style="background-color:#f3f4f6;">
+        <tr>
+            <th style="width:60px; text-align:center; padding:12px; border-bottom:1px solid #e5e8eb;">선택</th>
+            <th style="padding:12px; border-bottom:1px solid #e5e8eb;">사이트 이름</th>
+            <th style="padding:12px; border-bottom:1px solid #e5e8eb;">URL</th>
+            <th style="width:120px; text-align:center; padding:12px; border-bottom:1px solid #e5e8eb;">작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#sites}}
+            <tr class="site-row" data-id="{{id}}" style="border-bottom:1px solid #f0f0f0;">
+                <td style="text-align:center; padding:10px;">
+                    <input type="checkbox"  value="{{id}}" style="transform:scale(1.2); cursor:pointer;">
+                </td>
+                <td style="padding:10px;">{{name}}</td>
+                <td style="padding:10px;">
+                    <!-- ✅ 클릭 시 새 탭으로 이동 -->
+                    <a href="{{url}}" target="_blank" style="color:#3182f6; text-decoration:none;">{{url}}</a>
+                </td>
+                <td style="text-align:center; padding:10px;">
+                    <button class="btn btn-edit" onclick="openModal({{id}}, '{{name}}', '{{url}}')">수정</button>
+                </td>
+            </tr>
+        {{/sites}}
+        </tbody>
+    </table>
+</main>
+
+
+<!-- 모달 -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <h2 id="modal-title">사이트 등록</h2>
+        <form id="siteForm">
+            <input type="hidden" id="siteId" name="id">
+            <input type="text" id="siteName" name="name" placeholder="사이트 이름" required>
+            <input type="text" id="siteUrl" name="url" placeholder="사이트 URL" required>
+            <input type="text" id="siteTag" name="tag" placeholder="해시태그 (#제외)">
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">취소</button>
+                <button type="submit" class="btn btn-save">저장</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('modal');
+    const siteForm = document.getElementById('siteForm');
+
+    function openModal(id, name, url, tag) {
+        if (id) {
+            document.getElementById('modal-title').textContent = '사이트 수정';
+            document.getElementById('siteId').value = id;
+            document.getElementById('siteName').value = name;
+            document.getElementById('siteUrl').value = url;
+            document.getElementById('siteTag').value = tag || '';
+        } else {
+            document.getElementById('modal-title').textContent = '새 사이트 등록';
+            siteForm.reset();
+        }
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() { modal.style.display = 'none'; }
+
+    siteForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const site = new FormData(siteForm);
+        const id = site.get('id');
+        const url = id ? `/sites/${id}/update` : '/sites/ins';
+        await fetch(url, { method: 'POST', body: site });
+        location.reload();
+    });
+
+    function deleteSelected() {
+        const ids = Array.from(document.querySelectorAll('.delete-checkbox:checked')).map(cb => cb.value);
+        if (!ids.length) { alert('삭제할 사이트를 선택하세요.'); return; }
+        if (confirm(`${ids.length}개의 사이트를 삭제하시겠습니까?`)) {
+            fetch('/sites/delete', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(ids) })
+                    .then(() => location.reload());
+        }
+    }
+
+    function searchSites(e) {
+        e.preventDefault();
+        const tag = document.getElementById('searchTag').value;
+        window.location.href = `/sites?tag=${encodeURIComponent(tag)}`;
+    }
+</script>
+
+</body>
+</html>
