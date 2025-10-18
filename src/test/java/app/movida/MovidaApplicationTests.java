@@ -6,7 +6,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.config.server.config.ConfigServerAutoConfiguration;
 
 @SpringBootTest
-@EnableAutoConfiguration(exclude = {ConfigServerAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = {
+        ConfigServerAutoConfiguration.class,
+        // 필요하다면, Config Client 자동 설정도 제외
+        // ConfigServicePropertySourceLocator.class
+})
 class MovidaApplicationTests {
 
     @Test
