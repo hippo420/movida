@@ -50,5 +50,6 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // 명령줄에서 -D로 전달된 모든 시스템 속성을 테스트 JVM으로 전달합니다.
     systemProperties System.getProperties()
 }
