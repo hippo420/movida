@@ -21,6 +21,7 @@ public class Tag {
     @Column(unique = true)
     private String name;
 
+    @Builder.Default
     @ManyToMany(mappedBy = "tags")
     private Set<Movie> movies = new HashSet<>();
 }

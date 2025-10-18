@@ -26,6 +26,7 @@ public class Movie {
     @Column(columnDefinition = "LONGBLOB")
     private byte[] photo;  // 압축 저장된 사진 데이터
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "movie_actor",
@@ -34,6 +35,7 @@ public class Movie {
     )
     private Set<Actor> actors = new HashSet<>();
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "movie_tag",
