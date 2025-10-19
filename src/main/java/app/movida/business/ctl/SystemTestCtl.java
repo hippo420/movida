@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/system")
 public class SystemTestCtl {
-    @RequestMapping("/health-check")
+    @RequestMapping("/health")
     public String healthCheck() {
         return "OK";
     }
